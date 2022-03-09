@@ -9,8 +9,15 @@ The long term goal is that you can
 
 The big idea is that you can use higher level constructs that you invent specifically to be able
 to write correct-by-construction compilers, and know that their output is actually correct,
-without having to write the compiler in a language whose implementation has been proven correct
-(because you actually did: you used layers of minilang).
+without having to write the compiler in a language whose implementation has been proven correct.
+That's because you did: you used minilang.
+
+But how do we know that the minilang implementation is
+correct? The answer is that we can implement it in under 1kb of x86-64 code, which is tractable
+for humans to verify themselves. We can supplement with proofs in non-bootstrapped proof assistants.
+We can do this. Have a look at [sectorlisp](https://github.com/jart/sectorlisp) for inspiration.
+Have a look at [ape binaries](http://justine.lol/ape.html) by the same author to see how we could
+realistically export proofs from a bare metal environment into a POSIX environment and use stdio.
 
 If this works, programming language design will be reduced to specifying semantic-invariant-preserving
 transformations that operate on *computations* (which includes the compilation phase), which can be generalized and
