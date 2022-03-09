@@ -1,18 +1,16 @@
 ### minilang
 
-Minilang is a tiny language specification language.
-It is a term rewrite system, which is is like a primordial LISP with no environment.
+Minilang is term rewrite system, a tiny language-specification language.
 
 The long term goal is that you can
 - Define a language
-- Create an implementation of that language in that language
-- Write a correct-by-construction optimizing compiler for that language in that language
+- Write a correct-by-construction optimizing compiler for your language using your language
 - Bootstrap your compiler directly from minilang
 
-The key here is you can use higher level constructs that you invent specifically to be able
+The big idea is that you can use higher level constructs that you invent specifically to be able
 to write correct-by-construction compilers, and know that their output is actually correct,
-without having to write the compiler in a language that has been proven correct (because
-you actually did: you used layers of minilang).
+without having to write the compiler in a language whose implementation has been proven correct
+(because you actually did: you used layers of minilang).
 
 If this works, programming language design will be reduced to specifying semantic-invariant-preserving
 transformations that operate on *computations* (which includes the compilation phase), which can be generalized and
