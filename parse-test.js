@@ -38,8 +38,9 @@ it('multi case simple', t=>{
 ('a 'c .x) -+ ('c .x)
 `)
     const ast2 = p(`
-- (a b .x) + ('b .x)
-- (- c .x) + ('c .x)
+~f ('a 'b '0) + '0
+ - ('a 'b .x) + ('b .x)
+ - ( - 'c .x) + ('c .x)
 `)
     show(ast)
     t.ok(ast)
@@ -47,25 +48,31 @@ it('multi case simple', t=>{
 
 it('multi case nested', t=>{
     const ast = p(`
-lang1
- - ('a ('b 'c .x))    + ('0 .x)
- - ( - ( - 'd .x) ..) + ('1 .x ..)
- - ('z ('1 .y))       + ('2)
+~f
+ - ('a ('b 'c .x))       + f ('0 .x)
+ - ( - ( - 'd .x))       + f ('0 'd)
+ - ( - ( - 'e .x) ..)    + f ('1 .x ..)
+ - ('z ('1 .y))          + ('2)
+ - ('x 'y 'z 'w '2)      + 'z
+ - ( -  - ('a 'w '2))    + f 'w
 `)
-    const ast2 = p(`
-lang2
-  - < 'a
-      < < 'b
-          < 'c
-            < .x
-              <>
-            >
-          >
-        >
-        <>
-      >
-    >
-  + <'0 .x>
-
-`)
+;
+`
+('f ('a ('b 'c .x)))     |  ('f ('0 .x))
+('f ('a ('b 'd .x)))     |  ('f ('0 'd))
+('f ('a ('b 'e .x) ..))  |  ('f ('1 'd ..))
+('f ('z ('1 .y)))        |  ('2)
+('f ('x 'y 'z 'w '2))    |  'z
+('f ('x 'y ('a 'w '2)))  |  (f 'w)
+`
+;
+`
+~f \
+   'a \ ('b \ ('c .x)  | f ('0 .x)
+            \ ('d .x)  | f ('0 'd)
+   'a ('b ('e .x) ..   | f ('1 .x ..)
+   'z ('1 .y           | ('2)
+   'x 'y \ 'z 'w '2    | 'z
+           ('a 'w '2   | f 'w
+`
 })
