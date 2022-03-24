@@ -2,10 +2,12 @@ const ebnf = require('ebnf')
 
 const gram = `
 { ws=implicit }
-rule ::= (term) RSEP (term)
-term ::= "(" valvars+ ")"
+rule ::= (mold) RSEP (term)
+term ::= "(" loosevv* ")"
+mold ::= "(" strictvv+ ")"
+loosevv ::= (var | val)*
 onlyvars ::= var+
-valvars ::= onlyvars+ | vv valvars+
+strictvv ::= onlyvars+ | vv strictvv+
 vv   ::= var | val
 var  ::= "." sym
 val  ::= "'" sym
