@@ -1,7 +1,7 @@
 _=`; { ws=implicit
 _='ws{implicit }"}
 =;_
-rule ::= (mold) RSEP (term) EOF
+rule ::= (mold) RSEP (term)
 mold ::= "(" mexp* ")"     {framgent=true}
 `;_=`
 ;_= mexp ::= mold | vvl fragment
@@ -9,8 +9,8 @@ mold ::= "(" mexp* ")"     {framgent=true}
 rule ::=
 `;_=`
 { ws=implicit }
-rule ::= (mold) RSEP (term) EOF
-
+lang ::= rule* EOF
+rule ::= (mold) RSEP (term)
 mold ::= "(" mexp* ")"     {framgent=true}
 mexp ::= mold | vvl        {fragment=true}
 vvl  ::= val mexp | var*   {fragment=true}
@@ -22,7 +22,9 @@ var  ::= "." sym
 val  ::= "'" sym
 sym  ::= [a-z0-9]          {fragment=true}
 RSEP ::= "-+"
-WS   ::= " "
+WS   ::= [#x20#x09#x0A#x0D]+
+
+
 `
 
 const ebnf = require('ebnf')
