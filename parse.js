@@ -3,16 +3,13 @@ const ebnf = require('ebnf')
 const gram = `
 { ws=implicit }
 rule ::= (mold) RSEP (term)
-term ::= "(" loosevv* ")"
-mold ::= "(" strictvv+ ")"
+mold ::= "(" vvl ")"
+term ::= "(" vvr ")"
 var  ::= "." sym
 val  ::= "'" sym
-loosevv ::= vv*
-strictvv ::= val strictvv | vv loosevv
-vv   ::= var | val
-
-
-sym  ::= [a-z0-9]
+vvl  ::= val vvl | var*
+vvr  ::= (val | var)*
+sym  ::= [a-z0-9] {fragment=true}
 RSEP ::= "-+"
 WS   ::= " "
 `
