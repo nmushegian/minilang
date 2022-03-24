@@ -5,12 +5,13 @@ const gram = `
 rule ::= (mold) RSEP (term)
 term ::= "(" loosevv* ")"
 mold ::= "(" strictvv+ ")"
-loosevv ::= (var | val)*
-onlyvars ::= var+
-strictvv ::= onlyvars+ | vv strictvv+
-vv   ::= var | val
 var  ::= "." sym
 val  ::= "'" sym
+loosevv ::= vv*
+strictvv ::= val strictvv | vv loosevv
+vv   ::= var | val
+
+
 sym  ::= [a-z0-9]
 RSEP ::= "-+"
 WS   ::= " "
