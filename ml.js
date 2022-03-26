@@ -67,6 +67,16 @@ const appr =(rule,term)=> {
     return rewrite
 }
 
+const appl =(lang,term)=> {
+    for (const rule of lang) {
+        log(rule)
+    }
+}
+
+it('appl', t=>{
+    appl(lang,term)
+})
+
 it('isval isvar islist', t=>{
     t.ok(isval('if'))
     t.ok( ! isval('.if'))
@@ -94,3 +104,5 @@ it('appr', t=>{
     t.ok(nterm)
     t.equal(nterm, 'ali')
 })
+
+
