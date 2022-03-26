@@ -48,6 +48,25 @@ const match =(patt,term,onlyvars)=> {
     toss(`match panic: unreachable`)
 }
 
+const subst =(binds,plate)=> {
+    if (isval(plate)) {
+        return plate
+    }
+    if (isvar(plate)) {
+        if (plate in binds) {
+            return binds[plate]
+        }
+    }
+    return plate.map(x=>subst(binds, x))
+}
+
+const appr =(rule,term)=> {
+    need(rule[0] == 'RULE', `panic: appr(r,_) is not a rule: ${rule}`)
+    const binds = match(rule[1], term)
+    const rewrite = subst(binds, rule[2])
+    return rewrite
+}
+
 it('isval isvar islist', t=>{
     t.ok(isval('if'))
     t.ok( ! isval('.if'))
@@ -61,4 +80,17 @@ it('match', t=>{
     t.ok(bind)
     t.equal(bind['.a'], 'ali')
     t.equal(bind['.b'], 'bob')
+})
+
+it('subs', t=>{
+    const bind = match(rule0[1], term)
+    const rewrite = subst(bind, rule0[2])
+    t.ok(rewrite)
+    t.equal(rewrite, 'ali')
+})
+
+it('appr', t=>{
+    const nterm = appr(rule0, term)
+    t.ok(nterm)
+    t.equal(nterm, 'ali')
 })
