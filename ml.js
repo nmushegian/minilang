@@ -1,6 +1,6 @@
 const it = require('tapzero').test
 const toss =s=> { throw new Error(s) }
-const need =(b,s)=> b ?? toss(s)
+const need =(b,s)=> b ? b : toss(s)
 const log = console.log
 const show =(o,d)=> JSON.stringify(o, null, d??2)
 
