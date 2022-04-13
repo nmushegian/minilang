@@ -11,7 +11,6 @@ const lang = [rule0, rule1]
 
 const term = ['if', '0', 'ali', 'bob']
 
-
 const isval =s=> (typeof(s) == 'string' && s[0] != '.')
 const isvar =s=> (typeof(s) == 'string' && s[0] == '.')
 const islist =l=> (l instanceof Array)
