@@ -22,10 +22,10 @@ const code = `
 
 const read = gram(`
 book ::= S* rule+ S*
-rule ::= "-" S* sexp S* "+" S* sexp S*
+rule ::= "-" S* sexp "+" S* sexp
 symb ::= [A-Za-z0-9]+
 
-sexp ::= S* symb S* | S* "[" S* sexp* S* "]" S*
+sexp ::= symb S* | "[" S* sexp* S* "]" S*
 S   ::= [ \n]+
 `)
 
