@@ -48,6 +48,17 @@ test('read code1', t=>{
     t.ok(ast1)
 })
 
+
+const checksymb =s=> (typeof(s) == 'string' && s.length > 0)
+const checktope =s=> checksymb(s) && s[0] == s[0].toUpperCase()
+const checkvar  =s=> checksymb(s) && s[0] == s[0].toLowerCase()
+const checklist =s=> (l instanceof Array)
+
+test('checktope', t=>{
+    t.ok(checktope('Test'))
+    t.ok( ! checktope('test'))
+})
+
 // some basic static checks on top of `read`, then put
 // it in a representation native to environment
 const parse =src=> {
@@ -65,17 +76,18 @@ const parse =src=> {
         need(lhs.type == 'lhs', `parse: LHS of rule was not parsed as LHS, got ${lhs.type}`)
         need(rhs.type == 'rhs', `parse: RHS of rule was not parsed as RHS, got ${rhs.type}`)
 
-        need(lhs.children.length > 0, `parse panic: lhs has no children`)
-        const lexp = lhs.children[0]
 
-        const collect =sexp=> {
+
+        const checkleft =sexp=> {
             need(sexp.type == 'sexp', `parse panic: non-sexp at the wrong level, got ${sexp.type}`)
             need(sexp.children.length > 0, `parse panic: sexp with no children`)
             const head = sexp.children[0]
             need(head.type == 'sexp', `parse panic: unexpected structure`)
             const hsym = head.children[0]
             need(hsym.type == 'symb', `parse: sexp in lhs had a list as first item, need a symb (got: ${head.type})`)
+
             const tail = sexp.children.slice(1)
+            const vars = {}
             for (let term of tail) {
                 need(term.type == 'sexp', `parse panic: unexpected structure`)
                 need(term.children.length > 0, `parse panic: unexpected structure`)
@@ -83,17 +95,22 @@ const parse =src=> {
                     // check it is var
                     // return {'v'}
                 } else {
-                    const subvars = collect(term)
+                    const subvars = checkleft(term)
                     // merge subvars
                 }
             }
-            const vars = {}
             return vars
         }
-        const vars = collect(lexp)
-        console.log(vars)
-        // lhs expressions must all start with topes (symbols with capital letters)
+
+        need(lhs.children.length > 0, `parse panic: lhs has no children`)
+        const lexp = lhs.children[0]
+        const vars = checkleft(lexp)
+
         // rhs expressions must not contain variables not in lhs
+        need(rhs.children.length > 0, `parse panic: lhs has no children`)
+        const rexp = rhs.children[0]
+
+
     }
     return book
 }
