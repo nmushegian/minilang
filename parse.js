@@ -64,6 +64,18 @@ const parse =src=> {
         need(lhs.type == 'lhs', `parse: LHS of rule was not parsed as LHS, got ${lhs.type}`)
         need(rhs.type == 'rhs', `parse: RHS of rule was not parsed as RHS, got ${rhs.type}`)
 
+        const collect =sexp=> {
+            console.log('test', sexp)
+            console.log('text', sexp.text)
+            const c0 = sexp.text[0]
+            if (sexp.type == 'symb' && c0 == c0.toLowerCase()) {
+                return sexp.text
+            } else {
+                return ([]).concat(sexp.children.map(collect))
+            }
+        }
+        const vars = collect(lhs)
+        console.log(vars)
         // lhs expressions must all start with topes (symbols with capital letters)
         // rhs expressions must not contain variables not in lhs
     }
