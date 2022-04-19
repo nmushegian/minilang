@@ -15,8 +15,6 @@ because I want it to be that when programmers hear that name, they think things 
 - if you know any programming language, then you can learn minilang fast
 - if you don't know a programming language, minilang might be a way to 'dip your toes'
 - languages can all express each other, so it might be easier to think of complex languages in terms of minilang
-- minilang might be useful for me if it gives me a way to break down languages I don't know into ones I do
-- sometimes it feels like overkill to use a programming language to solve a problem, but maybe a 'small' programming language could make sense
 - if it's easy to learn and it might be useful, I should give it a try
 
 That is how I would explain the difference between ML and minilang to someone who doesn't know
