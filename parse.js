@@ -20,6 +20,8 @@ const code = `
 + [List x y]
 `
 
+const code1 = `- [Car [Cons x y]] + x`
+
 const read = gram(`
 book ::= S* rule+ S*
 rule ::= "-" S* sexp "+" S* sexp
@@ -29,9 +31,14 @@ sexp ::= symb S* | "[" S* sexp* S* "]" S*
 S   ::= [ \n]+
 `)
 
-
-test('read', t=>{
+test('read code0', t=>{
     const ast = read(code)
     t.ok(ast)
     console.log(show(ast))
+
+})
+
+test('read code1', t=>{
+    const ast1 = read(code1)
+    t.ok(ast1)
 })
