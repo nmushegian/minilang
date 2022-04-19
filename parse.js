@@ -1,5 +1,16 @@
-const it = require('tapzero').test
+const test = require('tapzero').test
+
 const gram = require('easygram')
+
+const show =(ast,d=0)=> {
+    let s = "("
+    s += ' '.repeat(d)
+    s += `${ast.type} <" ${ast.text.trim()} "> \n`
+    let subs = ast.children.map(c=>show(c, d+2))
+    s += subs.join("\n")
+    s += ")"
+    return s
+}
 
 const code = `
 - [List x [Unit y]]
@@ -18,13 +29,9 @@ sexp ::= S* symb S* | S* "[" S* sexp* S* "]" S*
 S   ::= [ \n]+
 `)
 
-show =ast=> {
-    return `( ${ast.type + " " + ast.children.map(show)} )`
-}
 
-it('read', t=>{
+test('read', t=>{
     const ast = read(code)
     t.ok(ast)
-    console.log(ast)
-
+    console.log(show(ast))
 })
