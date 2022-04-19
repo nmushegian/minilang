@@ -39,8 +39,6 @@ S   ::= [ \n]+
 test('read code0', t=>{
     const ast = read(code0)
     t.ok(ast)
-    console.log(show(ast))
-
 })
 
 test('read code1', t=>{
@@ -59,10 +57,34 @@ test('checktope', t=>{
     t.ok( ! checktope('test'))
 })
 
+const flatten =(ast)=> {
+    if (ast.type == 'symb') {
+        return ast
+    }
+    if (ast.type == 'sexp' && ast.children.length == 1) {
+        if (ast.children[0].type == 'symb') {
+            return ast.children[0]
+        }
+    }
+    ast.children = ast.children.map(flatten)
+    return ast
+}
+
+test('flatten code0', t=>{
+    const ast = read(code0)
+    t.ok(ast)
+    const flat = flatten(ast)
+    const rule0 = flat.children[0]
+    const lhs = rule0.children[0]
+    const sexp = lhs.children[0]
+    const head = sexp.children[0]
+    t.equal(head.type, 'symb')
+})
+
 // some basic static checks on top of `read`, then put
 // it in a representation native to environment
 const parse =src=> {
-    const ast = read(src)
+    const ast = flatten(read(src))
     const book = {}
     need(ast, `parse: read failed to return an AST, silent parse error`)
     need(ast.type == 'book', `parse: top-level expression is not a rulebook, got ${ast.type}`)
@@ -76,22 +98,15 @@ const parse =src=> {
         need(lhs.type == 'lhs', `parse: LHS of rule was not parsed as LHS, got ${lhs.type}`)
         need(rhs.type == 'rhs', `parse: RHS of rule was not parsed as RHS, got ${rhs.type}`)
 
-
-
         const checkleft =sexp=> {
             need(sexp.type == 'sexp', `parse panic: non-sexp at the wrong level, got ${sexp.type}`)
             need(sexp.children.length > 0, `parse panic: sexp with no children`)
             const head = sexp.children[0]
-            need(head.type == 'sexp', `parse panic: unexpected structure`)
-            const hsym = head.children[0]
-            need(hsym.type == 'symb', `parse: sexp in lhs had a list as first item, need a symb (got: ${head.type})`)
 
             const tail = sexp.children.slice(1)
             const vars = {}
             for (let term of tail) {
-                need(term.type == 'sexp', `parse panic: unexpected structure`)
-                need(term.children.length > 0, `parse panic: unexpected structure`)
-                if (term.children[0].type == 'symb') {
+                if (term.type == 'symb') {
                     // check it is var
                     // return {'v'}
                 } else {
