@@ -29,9 +29,10 @@ book ::= S* rule+ S*
 rule ::= lhs rhs
 lhs  ::= "-" S* sexp
 rhs  ::= "+" S* sexp
+sexp ::= symb S* | "[" S* sexp* S* "]" S*
 symb ::= [A-Za-z0-9]+
 
-sexp ::= symb S* | "[" S* sexp* S* "]" S*
+
 S   ::= [ \n]+
 `)
 
@@ -64,17 +65,32 @@ const parse =src=> {
         need(lhs.type == 'lhs', `parse: LHS of rule was not parsed as LHS, got ${lhs.type}`)
         need(rhs.type == 'rhs', `parse: RHS of rule was not parsed as RHS, got ${rhs.type}`)
 
+        need(lhs.children.length > 0, `parse panic: lhs has no children`)
+        const lexp = lhs.children[0]
+
         const collect =sexp=> {
-            console.log('test', sexp)
-            console.log('text', sexp.text)
-            const c0 = sexp.text[0]
-            if (sexp.type == 'symb' && c0 == c0.toLowerCase()) {
-                return sexp.text
-            } else {
-                return ([]).concat(sexp.children.map(collect))
+            need(sexp.type == 'sexp', `parse panic: non-sexp at the wrong level, got ${sexp.type}`)
+            need(sexp.children.length > 0, `parse panic: sexp with no children`)
+            const head = sexp.children[0]
+            need(head.type == 'sexp', `parse panic: unexpected structure`)
+            const hsym = head.children[0]
+            need(hsym.type == 'symb', `parse: sexp in lhs had a list as first item, need a symb (got: ${head.type})`)
+            const tail = sexp.children.slice(1)
+            for (let term of tail) {
+                need(term.type == 'sexp', `parse panic: unexpected structure`)
+                need(term.children.length > 0, `parse panic: unexpected structure`)
+                if (term.children[0].type == 'symb') {
+                    // check it is var
+                    // return {'v'}
+                } else {
+                    const subvars = collect(term)
+                    // merge subvars
+                }
             }
+            const vars = {}
+            return vars
         }
-        const vars = collect(lhs)
+        const vars = collect(lexp)
         console.log(vars)
         // lhs expressions must all start with topes (symbols with capital letters)
         // rhs expressions must not contain variables not in lhs
