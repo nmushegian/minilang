@@ -1,6 +1,6 @@
 {
   "name": "minilang",
-  "semver": "0.0.1",
+  "version": "0.0.1",
   "devDependencies": {
     "tapzero": "^0.6.1"
   },
