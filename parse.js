@@ -79,32 +79,31 @@ test('flatten code0', t=>{
 })
 
 const checkleft =sexp=> {
-    //            console.log(`checkleft ${show(sexp)}`)
+    //console.log(`checkleft ${show(sexp)}`)
     need(sexp.type == 'sexp', `parse panic: non-sexp at the wrong level, got ${sexp.type}`)
     need(sexp.children.length > 0, `parse panic: sexp with no children`)
     const head = sexp.children[0]
+    if (head.type == 'symb') {
+        need(checktope(head.text), `err: LHS terms cannot start with variables, got: ${head.type} ${head.text}`)
+    }
     const tail = sexp.children.slice(1)
-    //            console.log('tail', tail)
+    //console.log('tail', tail)
     let vars = []
-    for (let term of tail) {
-        //                console.log('term', term)
+    for (let term of sexp.children) {
+        //console.log('term', term)
         if (term.type == 'symb') {
-            //                    console.log('its a symb')
-            //                    console.log('text is', term.text)
-            if (term.text in vars.values()) {
-                toss(`err: duplicate variable name in rule: ${term.text} in ${lhs.text}`)
-            } else {
-                vars.push(term.text)
-            }
+            //console.log('its a symb')
+            //console.log('text is', term.text)
+            need( ! (term.text in vars.values())
+                , `err: duplicate variable name in rule: ${term.text} in ${show(sexp)}`)
+            vars.push(term.text)
         } else {
-            //                    console.log('term is not symb')
+            //console.log('term is not symb')
             const subvars = checkleft(term)
             for (const subvar of subvars.values()) {
-                if (subvar in vars.values()) {
-                    toss(`err: duplicate variable name in rule: ${term.text} in ${lhs.text}`)
-                } else {
-                    vars.push(subvar)
-                }
+                need( ! (subvar in vars.values())
+                    , `err: duplicate variable name in rule: ${term.text} in ${show(sexp)}`)
+                vars.push(subvar)
             }
         }
     }
@@ -166,7 +165,7 @@ const parse =src=> {
         const rexp = rhs.children[0]
         //console.log(show(rexp))
         const outs = checkright(rexp, vars)
-        console.log(outs)
+        //console.log(outs)
 
         rule.match = {}
         rule.mvars = vars
