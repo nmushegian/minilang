@@ -81,6 +81,42 @@ test('flatten code0', t=>{
     t.equal(head.type, 'symb')
 })
 
+const checkleft =sexp=> {
+    //            console.log(`checkleft ${show(sexp)}`)
+    need(sexp.type == 'sexp', `parse panic: non-sexp at the wrong level, got ${sexp.type}`)
+    need(sexp.children.length > 0, `parse panic: sexp with no children`)
+    const head = sexp.children[0]
+    const tail = sexp.children.slice(1)
+    //            console.log('tail', tail)
+    let vars = []
+    for (let term of tail) {
+        //                console.log('term', term)
+        if (term.type == 'symb') {
+            //                    console.log('its a symb')
+            //                    console.log('text is', term.text)
+            if (term.text in vars.values()) {
+                toss(`err: duplicate variable name in rule: ${term.text} in ${lhs.text}`)
+            } else {
+                vars.push(term.text)
+            }
+        } else {
+            //                    console.log('term is not symb')
+            const subvars = checkleft(term)
+            for (const subvar of subvars.values()) {
+                if (subvar in vars.values()) {
+                    toss(`err: duplicate variable name in rule: ${term.text} in ${lhs.text}`)
+                } else {
+                    vars.push(subvar)
+                }
+            }
+        }
+    }
+    return vars
+}
+
+const checkright =(term,vars)=> {
+}
+
 // some basic static checks on top of `read`, then put
 // it in a representation native to environment
 const parse =src=> {
@@ -100,34 +136,18 @@ const parse =src=> {
         need(lhs.type == 'lhs', `parse: LHS of rule was not parsed as LHS, got ${lhs.type}`)
         need(rhs.type == 'rhs', `parse: RHS of rule was not parsed as RHS, got ${rhs.type}`)
 
-        const checkleft =sexp=> {
-            need(sexp.type == 'sexp', `parse panic: non-sexp at the wrong level, got ${sexp.type}`)
-            need(sexp.children.length > 0, `parse panic: sexp with no children`)
-            const head = sexp.children[0]
-            const tail = sexp.children.slice(1)
-            const vars = {}
-            for (let term of tail) {
-                if (term.type == 'symb') {
-                    // check it is var
-                    // return {'v'}
-                } else {
-                    const subvars = checkleft(term)
-                    // merge subvars
-                }
-            }
-            return vars
-        }
-
         need(lhs.children.length > 0, `parse panic: lhs has no children`)
         const lexp = lhs.children[0]
         const vars = checkleft(lexp)
 
-        // rhs expressions must not contain variables not in lhs
         need(rhs.children.length > 0, `parse panic: lhs has no children`)
         const rexp = rhs.children[0]
+        const outs = checkright(rexp, vars)
 
         rule.match = {}
+        rule.mvars = vars
         rule.write = {}
+        rule.wvars = outs
         book.rules.push(rule)
     }
     return book
