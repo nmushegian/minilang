@@ -90,11 +90,13 @@ const parse =src=> {
     need(ast.type == 'book', `parse: top-level expression is not a rulebook, got ${ast.type}`)
     book._src = src
     book._ast = ast
-    for( let rule of ast.children ) {
-        need(rule.type == 'rule',
-            `parse: second-level expression is not a rule, got ${rule.type}`)
-        const lhs = rule.children[0]
-        const rhs = rule.children[1]
+    book.rules = []
+    for( let child of ast.children ) {
+        const rule = {}
+        need(child.type = 'rule',
+            `parse: second-level expression is not a rule, got ${child.type}`)
+        const lhs = child.children[0]
+        const rhs = child.children[1]
         need(lhs.type == 'lhs', `parse: LHS of rule was not parsed as LHS, got ${lhs.type}`)
         need(rhs.type == 'rhs', `parse: RHS of rule was not parsed as RHS, got ${rhs.type}`)
 
@@ -102,7 +104,6 @@ const parse =src=> {
             need(sexp.type == 'sexp', `parse panic: non-sexp at the wrong level, got ${sexp.type}`)
             need(sexp.children.length > 0, `parse panic: sexp with no children`)
             const head = sexp.children[0]
-
             const tail = sexp.children.slice(1)
             const vars = {}
             for (let term of tail) {
@@ -125,7 +126,9 @@ const parse =src=> {
         need(rhs.children.length > 0, `parse panic: lhs has no children`)
         const rexp = rhs.children[0]
 
-
+        rule.match = {}
+        rule.write = {}
+        book.rules.push(rule)
     }
     return book
 }
