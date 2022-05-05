@@ -3,23 +3,26 @@ const gram = require('easygram')
 
 const read = gram(`
 book  ::= COMM* (term COMM*)+
-rule  ::= term term
+rule  ::= term WS* term
 term  ::= COMM* '[' WS* (word WS*)+ ']' COMM*
 word  ::= [a-z0-9]+
-COMM  ::= ^[\[\]]+
+COMM  ::= WS+
+WS    ::= [ \n]+
 `)
 
-const code = `
-[car [cons a b]] 
-[a]
-`
+const code = `[car [cons a b]] [a]`
+
+it('nobare', t=>{
+    let ast = read(code)
+    console.log(ast)
+})
 
 const read2 = gram(`
 book  ::= LEAP* (rule LEAP+)+
 rule  ::= term '\n' term
 term  ::= word | '[' term+ ']'
 word  ::= [a-z0-9]
-leap  ::=  '\n\n'
+LEAP  ::=  '\n\n'
 `)
 
 const code2 = `
