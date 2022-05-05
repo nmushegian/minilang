@@ -1,7 +1,7 @@
-const { test } = require('tapzero')
-const gram = require('easygram')
+import { test } from 'tapzero'
+import { default as gram } from 'easygram'
 
-let read = gram(`
+export const read = gram(`
 {ws=implicit}
 book ::= rule* EOF?
 rule ::= term term
@@ -12,9 +12,7 @@ WS   ::= [ \n]+
 
 test('read', t=>{
     let ast = read(`word`)
-    console.log(ast)
     ast = read(`abc abc`)
-    console.log(ast)
     t.ok(ast)
 
     ast = read(`[abc] [abc]`)

@@ -1,6 +1,7 @@
 {
   "name": "minilang",
   "version": "0.0.1",
+  "type": "module",
   "devDependencies": {
     "tapzero": "^0.6.1"
   },
