@@ -37,8 +37,12 @@ const flat =ast=> {
     fail(`panic: bad parse`)
 }
 
-const read =s=> {
+export const read =s=> {
+
     const ast = _read(s)
+    console.log(ast)
+    const fl = flat(ast)
+    console.log(fl)
     return flat(ast)
 }
 
